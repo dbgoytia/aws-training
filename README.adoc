@@ -1,0 +1,8 @@
+= AWS training and notes
+Diego Goytia <Diego.Goytia@ibm.com>
+1.0 ,October 8, 2020
+
+== AWS training - from zero to hero.
+
+My collection of knowledge and training around AWS.
+
