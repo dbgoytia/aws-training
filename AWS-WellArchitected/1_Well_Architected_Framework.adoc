@@ -1,0 +1,67 @@
+= AWS Well Architected Framework Notes
+Diego Canizales <diego.canizales1995@gmail.com>
+1.0, October 9, 2020,
+
+*NOTE I wish I was the author of this framework, but obviously I'm not. This is just meant to be a set of notes and key concepts around the AWS well architected framework, key to understanding AWS.*
+
+== AWS Well architected frameworks, key concepts.
+
+With the born of cloud era, multiple tasks have come from being implemented or executed by teams, give for example, a team of 50 people, to be managed or implemented by a set of only 5 people (_pizza-size_ teams). Now this doesn't mean that AWS is exploiting it's sysadmins, devops, and developers, but rather, that they are amplifying the usability of the platform by setting some ground pillars that enable us to *think different* and *act different* when it comes to managing our cloud infrastructure.
+
+The well architected framework only goal is to help you *amplify what you can do* with AWS - or let's keep it real, any infrastructure solution that you do.
+
+The well architected framework *IS NOT* a set of reference architectures, that exist too, in other resources in AWS cloud, but rather *IS* *a set of principles to build better solutions*.
+
+
+== The 5 pillars of the Well Architected framework:
+
+
+* Operational Excelence
+* Security
+* Cost Optimization
+* Reliability
+* Performance and efficiency
+
+The idea is simple: This is not something they just sat down and write about, but rather it is a collection of knowledge gathered from 10+ years of managing infrastructure in the top cloud public cloud provider.
+*Built on the shoulders of giants, learn from them!*
+
+However, there are some things you have to keep an eye from
+
+=== Everythin is a trade-off:
+
+In a dream like environment, you could wish to max out all of your 5 pillars of your infrastructure. However, keep in mind what cost would that represent? How operational would that be? You have to keep in mind what are your actual requirements too? Do you need more security, more reliability, or maybe you have a budget constraint?
+
+The lesson: *you can't have it all*, and therefore, you're going to have to adapt. The Well-architected framework is intended to help you make desitions in the most accurate and informed way - you'll find more as you dig deeper in this knowledge-. So more than just trying to finish this training or reading all the way through the well-architected framework, try to internalize it's teachings, and think of your operational activites in therms of them.
+
+== Guiding principles
+
+*GOAL: Challenge traditional IT.*
+
+. Stop guessing capacity and needs:
+
+    There is no excuste to under-provision or over provision in the AWS cloud, since you only pay for what you're using.
+
+. Automate everythin:
+
+    Absolutely everythin is available through an API. It's no excuse not to manage everything in a programatic way!
+
+. Test on an accurate replica of production on-demand
+
+    That is an awesome idea. You should always test on an exact replica of whatever is running in production. Infrastructure, everything. Since you have it automated and templated, this is enabled automatically and is no excuse. (maybe budget is jeje, but it's meant to be ephemeral! keep that in mind, not a full environment like dev, and even then you can assure that the dev environment is exactly in every way to production.
+
+    ** Stay away from *snoflake servers*, since they add lots and tons of *operational drift*. Snowflake servers refers to the minimal configuration changes between two servers in the same environment that shoudl be the same, and somehow, are alive jaja! Then the only magician that knows how to apply changes and recover/troubleshoot this snowflake servers is the sysadmin -> Damn bad practice for automation.
+
+    ** Keep in mind the awesome idea that this means for testing at scale!
+
+. Adapt the architecture as needed
+
+    Meet new challenges, nothing is static, adapt to everything, evolve.
+
+. Be data driven
+
+    Come on, you would have everything automated and generating traces all the way in your environment. Make use of them and make more accurate, data driven desitions.
+
+. Practice, practice, practice...
+
+    *PRACTICE!!!* Be prepared for every scenario, make yourself a guru in whatever area of specialization (or areas) most concern your role. That is key to being prepared for production grade troubleshooting.
+
