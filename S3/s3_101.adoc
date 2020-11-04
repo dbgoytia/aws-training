@@ -127,4 +127,3 @@ Take a look at *Transfer Acceleration Tool* (Google it) to see it in action.
 
 * It is basically a way to sync your on-premise environment with your s3 storage. 
 * Works through an agent that you deploy on your on-prem environment.
-
