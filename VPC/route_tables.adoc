@@ -1,0 +1,132 @@
+= AWS VPC Route Tables
+Diego Canizales <diego.canizales1995@gmail.com>
+1.0, October 16, 2020
+:icons: font
+
+This is intented to just be reference material. Use it if it works for you!
+Check this one for the full documentation:
+https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html
+https://en.wikipedia.org/wiki/Routing_table#:~:text=In%20computer%20networking%20a%20routing,distances)%20associated%20with%20those%20routes.
+https://medium.com/@mda590/aws-routing-101-67879d23014d
+
+*I DO NOT TAKE CREDIT FOR ANYTHING.*
+
+== Route Table: Networking
+
+A routing table, is a data table stored ina  router or a network host that lists the routes to particular network destinations, and in some cases, it also provides metrics (distances) associated with those routes.
+
+The main goal is to provide support for different routing protocols. Routing protocols specify how tow routers communicate with each other to distribute information that enables them to select routes between any two nodes on a computer network. 
+
+Remember that *static routes* are entries made in a routing table by a non-automatic means, and are fixed rather than being the result of routing protocols and associated network topology discovery procedures.
+
+TIP: Think about how we can test some of this stuff out in AWS, or OpenStack (maybe?). You don't even have hardware for doing this, cmon.
+
+
+== Route Tables: How it works in AWS
+
+Your VPC has an explicit route installed, and you can configure it to controll where the traffic is being redirected. *Each subnet in your VPC hast to be associated with a route table*. A subnet can only be associated with one main route table, but you can associate multiple subnets with the same subnet route table.
+
+You can specify *route tables with the internet gateway or a virtual private gateway, in order to specify rules for inbound traffic* that enters your VPC. 
+
+== Routes
+
+Each route in a table specifies a destination and a target. For example, consider the following example:
+
+. In order to provide internet access through an internet gateway, you would have to add the following route to your subnet route table:
+
+|===
+| Destination | Target 
+| 0.0.0.0/0   | igw-_some_random_hash_
+|===
+
+The destination for the route is 0.0.0.0/0, which represents all IPv4 addresses. The target is the internet gateway attached to your VPC. 
+
+In the case of AWS, and I'm uncertain this is the way that it is handled everywhere, CIDR blocks for IPv4 and IPv6 are treated separately, so you would have to create a route with a destination CIDR of ::/0 for all IPv6 addresses.
+
+
+=== Main Route table
+
+* It's created when you create your VPC. 
+* Controls the routing for all subnets not explicitly associated with any other route table.
+
+
+== Subnet route table association
+
+* Each subnet must be associated with a route table.
+** Explicity association with custom route table
+** Implicit or explicit association with the main route table
+
+
+== Routing between subnets inside of a local VPC
+
+By default, each *VCP* comes with 1 route table pre-configured with a "local" route, that would be, your CIDR_BLOCK. For example, if you tell your VPC to get created with the address space of "172.16.0.0/16", you'll have an entry in your "local" route, defined as "172.16.0.0/16".
+  
+TIP: This allows all resources created inside the VPC to talk to each other without any other additional configuration. 
+
+Within your VPC, route tables are assigned to individual subnets. You can create multiple route tables in  VPC, or you can leave the 1 default route table.
+
+
+=== Example: Using our Terraform lab.
+
+Create a VPC with two subnets, and perform the following exercises:
+
+==== Create a signle route table for the entire VPC 
+  
+This would simulate a scneario where:
+
+* There are only public subnets
+* They are all pointing to the single VPC internet gateway
+
+==== Create one route table per subnet
+
+This would simulate an environment where more complex routing scenarios are needed.
+* There are both public and private routes
+* They are all pinting to the signel VPC internet gateway
+
+==== Create a 2-tier routing table (one for public subnets, one for private subnets)
+
+Best practice is to have 1 route table for public subnets, and 1 route table for private subnets. In this scenario you will have to separate into different availability zones. The reason: You will want systems in AZ A to use NAT gateway an any other system also in that AZ; same for systems in AZ B. This ensures high availability (if one becomes unavailable, the second AZ doesn't depend on the latter).
+
+
+
+== Routing to the public internet
+
+In order for the resources to reach public internet, the _gateway of last resort; 0.0.0.0/0_ has to be set. 
+
+It can be either pointed to:
+* A *Internet gateway*
+* A *nat gateway*
+
+
+=== Internet Gateway: when to use it
+
+* Devices already have public addresses
+* They are placed in a public subnet
+* There is only one IG per VPC.
+
+You must: create a route within each public subnet, with the Destination CIDR as: 0.0.0.0/0 and a Target of the internet gateway's ID.
+
+
+=== NAT Gateways: when to use it
+
+* Devices only have private IP addresses (no means to reach public internet)
+
+*NAT: Network Address Translation* gateway, is what facilitates internet access for resources sitting ina private subnet in a VPC or private schema.
+
+*NGW: Nat Gateway* is placed in a public subnet within the VPC, and given a public IP address. This allows the NGW to connect through the internet gateway, to the public internet, and, literally, _translate_ private addresses in the private subnets into a public address that can be used to connect outside the internet.
+
+
+
+=== Example: Using our Terraform lab.
+
+
+Generate the following two schemas:
+
+. A schema that would require an internet gateway to access public internet
+. A schema that would require a nat getway to access public internet
+
+
+
+
+
+
