@@ -1,0 +1,130 @@
+= S3
+Diego Goytia <diego.canizales1995@gmail.com>
+1.0, Nov 4, 2020, s3 important notes
+
+
+== S3 101
+
+A collection of notes around important s3 concepts.
+
+S3 = _simple storage solution_
+
+=== Controlling access to Buckets
+
+There are two main ways to controll access to s3 storage, and it's important to understand that they both work at different levels.
+
+. Access Control Lists (ACL)
+    
+* A concept created in the Linux world, basically authorizes you to use a resource. In the particular case of S3, ACL's work on the bucket level, meaning that this kind of permissions won't let you  manipulate objects within the Bucket.
+
+* It maps *groups* and *accounts* that have access to a particular resource. This are called *grantees*.
+
+* Not so granular as the _bucket policy_ method.
+
+. AWS Bucket Policies and User Policies
+
+* Let you manipulate access to particular objects in a bucket.
+
+* Provide more granularity than the ACL. 
+
+* They are a mapping to which service or user, is allowed (or denied) to preform actions in a particular object or objects in an s3 bucket.
+
+
+
+*ACL's are considered legacy (although, not deprecated) so using bucket policies is best practice to this point.* 
+
+
+=== S3 Object Locks
+
+It is a way  to store objects using the *WORM* model _Write Once Read Many_. You can use this to prevent an object from being deleted or overwritten for a fixed ammount of time, or indefinitely.
+
+
+Two ways of managing object retention.
+
+. Through a _retention period_ During this time an object remains locked. During this period, your object is WORM protected and can't be overwritten or deleted.
+. Through a _legal hold_, that is almost the same as a retention period, but this one will remain active until you explicitly remove it.
+
+Two retention modes:
+
+. Governance mode
+* Users can't overwrite or delete an object version or alter its lock settings unless they have special permissions
+. Compliance mode
+* A protected object version can't be overwritten or deleted by any user, including the root user in your AWS account
+
+
+
+=== Lifecycle management
+
+You can choose a set of rules that allow you to transition elements across different tiers of s3 storage. 
+
+* Reduce costs from elements that aren't accessed so frequently.
+* Be in compliance: You can add special attributes for elements that must be retained for a specific period of time (HIPPA, etc.).
+
+
+You have to define two set of rules:
+* For transitioning across the tiers of s3.
+* For expiration of the elements (deletion).
+
+
+You can define set of rules like the following, that will automatically transition and expire your objects eventualy:
+
+.Lifecycle workflow
+|===
+|S3 Storage|S3 Storage Infrequent Access | S3 Glacier | Expiration 
+|Entrypoint| After 30 days | After 60 days | After 90 days
+|===
+
+
+
+=== S3 Performance
+
+You have to remember that s3 *does not have a Filesystem strucutre*, but it does allow you to perform interesting optimizations through *prefixes*.
+
+Remember that s3 has an extremely low latency.
+
+==== Prefixes
+* Basically the "path" you would follow to an object in s3.
+* Allows you to increase performance by spreading reads across different prefixes.
+
+==== Multi-part uploads
+
+* Allow you to parallelize upload of files to s3 storage.
+* Optional for files over 100 MB.
+* Required for files over 5 GB.
+* Allows you to resume failed uploads (or pause).
+
+==== S3 byte-rante fetch
+
+* Allow you to parallelize download of files from s3 storage.
+
+
+==== S3 Select
+
+* It is a way that you can query objects in s3 storage directly. 
+* This means that you don't have to download/decompress/process each object, otherwise you simply write an *sql* query to automatically ask questions.
+
+==== Glacier Select
+
+* Allow you to query Glacier storage directly.
+
+
+=== S3 Cross-Region Replication
+
+* It is a means to replicate buckets across different regions.
+* Newly created objects after cross-region replication has been applied will automatically get replicated across different regions.
+* Files that existed before the cross-region replication was enabled *will not* automatically replicate, you'll have to take care of those.
+* Delete operations do not get replicated *obviously*: Remember that replication is a means for saving you in case somebody (or yourself) mistakenly delete an imporant file.
+
+
+=== S3 Transfer acceleration
+
+It is a way to enable CloudFront, through an edge location, to make uploads and downloads from buckets a ton faster. 
+
+Take a look at *Transfer Acceleration Tool* (Google it) to see it in action.
+
+
+=== AWS Data Sync
+
+* It is basically a way to sync your on-premise environment with your s3 storage. 
+* Works through an agent that you deploy on your on-prem environment.
+
